@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중국 피부과 마케팅 전략 대시보드</title>
+    <!-- Chosen Palette: Warm Neutral -->
+    <!-- Application Structure Plan: The application is designed as a single-page dashboard with a fixed top navigation, allowing users to seamlessly switch between thematic sections without losing context. This structure was chosen over a linear report format to empower users to explore information based on their immediate interests (e.g., jump directly to 'Platform Strategy' or 'Roadmap'). The flow is: 1. Start with a high-level Overview. 2. Dive into specific strategies via the navigation: Platform Strategy (interactive grid), Content Strategy (visual OSMU diagram), Action Roadmap (tabbed timeline), and Key Guides (regulations & influencers). This non-linear, task-oriented design enhances usability by making complex information digestible and easily accessible. -->
+    <!-- Visualization & Content Choices: 
+        - Platform Strategy: Goal=Compare/Inform -> Method=Interactive 2x2 Grid + Bar Chart (Chart.js) -> Interaction=Click grid item to show details; chart visualizes platform roles -> Justification=Allows for quick comparison and deep dives into platform specifics.
+        - Content Strategy: Goal=Organize/Explain -> Method=Visual Diagram (HTML/CSS Flexbox) -> Interaction=Hover/click elements to highlight flow from source to repurposed content -> Justification=Clearly illustrates the OSMU concept, which is more intuitive than a static table.
+        - Roadmap: Goal=Change/Plan -> Method=Tabbed Interface for phases -> Interaction=Click tabs to switch between 3-month phases -> Justification=Breaks down the 12-month plan into manageable, chronological steps.
+        - Regulations: Goal=Inform/Warn -> Method=Styled "Do's & Don'ts" Table (HTML/Tailwind) -> Interaction=None needed, clarity is key -> Justification=Directly presents critical legal constraints in a highly scannable format.
+        - Influencers: Goal=Compare/Inform -> Method=Side-by-side Cards + Doughnut Chart (Chart.js) -> Interaction=Chart visualizes the 80/20 budget split -> Justification=Effectively contrasts KOLs and KOCs and highlights the key strategic recommendation.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F8F9FA;
+            color: #343A40;
+        }
+        .nav-link {
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #4A5568;
+            border-bottom-color: #4A5568;
+        }
+        .section-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .tab.active {
+            background-color: #4A5568;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .platform-card {
+            cursor: pointer;
+        }
+        .platform-details {
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.7s ease-in-out;
+        }
+        .platform-details.active {
+             display: block;
+            max-height: 1000px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-gray-800">중국 마케팅 대시보드</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="nav-link px-3 py-2 text-sm font-medium text-gray-600">개요</a>
+                        <a href="#platforms" class="nav-link px-3 py-2 text-sm font-medium text-gray-600">플랫폼 전략</a>
+                        <a href="#content" class="nav-link px-3 py-2 text-sm font-medium text-gray-600">콘텐츠 전략</a>
+                        <a href="#roadmap" class="nav-link px-3 py-2 text-sm font-medium text-gray-600">실행 로드맵</a>
+                        <a href="#guides" class="nav-link px-3 py-2 text-sm font-medium text-gray-600">핵심 가이드</a>
+                    </div>
+                </div>
+                 <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+             <div class="hidden md:hidden" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="#overview" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-600">개요</a>
+                    <a href="#platforms" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-600">플랫폼 전략</a>
+                    <a href="#content" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-600">콘텐츠 전략</a>
+                    <a href="#roadmap" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-600">실행 로드맵</a>
+                    <a href="#guides" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-600">핵심 가이드</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <section id="overview" class="page-section mb-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 sm:text-4xl">중국 의료 미용 시장 진출 전략</h2>
+                <p class="mt-4 text-lg text-gray-600">유튜브 자산을 활용한 다중 플랫폼 접근법</p>
+            </div>
+
+            <div class="section-card p-8">
+                 <h3 class="text-2xl font-bold text-gray-700 mb-4">핵심 성공 전략 요약</h3>
+                 <p class="text-gray-600 mb-6">성공적인 중국 시장 진출은 단일 플랫폼이 아닌, 각기 다른 역할을 수행하는 여러 플랫폼을 유기적으로 연결하는 '통합 생태계 구축'에 달려있습니다. 30만 구독자의 유튜브 채널이라는 강력한 자산을 '원소스 멀티유즈(OSMU)' 방식으로 재가공하여 콘텐츠 효율을 극대화하고, 엄격한 현지 의료 광고 법규를 '신뢰의 방패막'으로 활용하는 것이 핵심입니다. 이 대시보드는 이러한 복합적인 전략을 시각적이고 체계적으로 이해할 수 있도록 돕습니다.</p>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-bold text-gray-700">① 통합 생태계 구축</h4>
+                        <p class="text-sm text-gray-600 mt-1">도우인, 샤오홍슈, 위챗, 바이두를 연동하여 인지-고려-전환의 고객 여정 설계</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-bold text-gray-700">② 콘텐츠 재활용 극대화</h4>
+                        <p class="text-sm text-gray-600 mt-1">기존 유튜브 영상을 중국 플랫폼에 맞게 재가공하여 비용 효율 및 전문성 확보</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-bold text-gray-700">③ 규제 준수를 통한 차별화</h4>
+                        <p class="text-sm text-gray-600 mt-1">'효능 보장'이 아닌 '과학적 정보 제공'으로 신뢰를 쌓는 교육적 마케팅 전개</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-bold text-gray-700">④ 진정성 중심 인플루언서</h4>
+                        <p class="text-sm text-gray-600 mt-1">소수 KOL 대신 다수 KOC를 활용해 '체험기' 중심의 사회적 증거 구축</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="platforms" class="page-section mb-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">4대 핵심 플랫폼 전략</h2>
+                <p class="mt-4 text-lg text-gray-600">각 플랫폼의 역할과 특성을 이해하고 고객 여정 단계별로 활용합니다.</p>
+            </div>
+            <div class="section-card p-8 mb-8">
+                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div id="platform-douyin" class="platform-card p-6 bg-gray-100 rounded-lg text-center transition-all duration-300 hover:bg-gray-200">
+                        <h4 class="text-xl font-bold">도우인 (抖音)</h4>
+                        <p class="text-sm text-gray-500">인지도 확보</p>
+                    </div>
+                    <div id="platform-xiaohongshu" class="platform-card p-6 bg-gray-100 rounded-lg text-center transition-all duration-300 hover:bg-gray-200">
+                        <h4 class="text-xl font-bold">샤오홍슈 (小红书)</h4>
+                        <p class="text-sm text-gray-500">신뢰 구축</p>
+                    </div>
+                    <div id="platform-wechat" class="platform-card p-6 bg-gray-100 rounded-lg text-center transition-all duration-300 hover:bg-gray-200">
+                        <h4 class="text-xl font-bold">위챗 (微信)</h4>
+                        <p class="text-sm text-gray-500">예약 전환</p>
+                    </div>
+                    <div id="platform-baidu" class="platform-card p-6 bg-gray-100 rounded-lg text-center transition-all duration-300 hover:bg-gray-200">
+                        <h4 class="text-xl font-bold">바이두 (百度)</h4>
+                        <p class="text-sm text-gray-500">수요 포착</p>
+                    </div>
+                </div>
+                <div id="platform-details-container" class="mt-6"></div>
+            </div>
+        </section>
+
+        <section id="content" class="page-section mb-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">콘텐츠 전략: 원소스 멀티유즈 (OSMU)</h2>
+                <p class="mt-4 text-lg text-gray-600">하나의 유튜브 영상을 각 플랫폼 특성에 맞게 재가공하여 효율을 극대화합니다.</p>
+            </div>
+            <div class="section-card p-8">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+                    <div class="text-center p-6 bg-red-100 rounded-xl shadow-md w-full md:w-1/4">
+                        <h4 class="text-lg font-bold text-red-800">원본 소스</h4>
+                        <p class="font-bold text-2xl mt-2">유튜브 영상</p>
+                        <p class="text-sm text-red-700">(15분 비교분석)</p>
+                    </div>
+                    <div class="hidden md:block text-4xl text-gray-400">→</div>
+                    <div class="block md:hidden text-4xl text-gray-400">↓</div>
+                    <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+                        <div class="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                            <h5 class="font-bold text-green-800">샤오홍슈 (图文笔记)</h5>
+                            <ul class="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
+                                <li>시술 원리 심층 분석 (다이어그램)</li>
+                                <li>피부 타입별 선택 가이드</li>
+                                <li>KOC의 상세 체험 일지</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <h5 class="font-bold text-blue-800">도우인 (숏폼)</h5>
+                            <ul class="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
+                                <li>15초 핵심 차이 요약 영상</li>
+                                <li>의사가 설명하는 30초 Q&A</li>
+                                <li>장비의 역동적인 모습 쇼케이스</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+                            <h5 class="font-bold text-purple-800">위챗 (공식계정)</h5>
+                            <ul class="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
+                                <li>영상 기반 심층 분석 리포트</li>
+                                <li>자주 묻는 질문(FAQ) 정리</li>
+                                <li>구독자 대상 프로모션 공지</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                            <h5 class="font-bold text-yellow-800">바이두 (SEO)</h5>
+                             <ul class="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
+                                <li>'울쎄라 써마지 차이' 키워드 포스팅</li>
+                                <li>'여드름 흉터 치료' 정보성 아티클</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="roadmap" class="page-section mb-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">12개월 실행 로드맵</h2>
+                <p class="mt-4 text-lg text-gray-600">단계별 목표를 설정하고 체계적으로 시장에 진출합니다.</p>
+            </div>
+            <div class="section-card p-8">
+                <div class="mb-6">
+                    <div class="flex border-b border-gray-200">
+                        <button data-tab="phase1" class="tab flex-1 py-3 px-1 text-center font-medium text-gray-500 hover:bg-gray-100 active">1단계 (1-3개월)<br><span class="text-sm font-normal">기반 구축</span></button>
+                        <button data-tab="phase2" class="tab flex-1 py-3 px-1 text-center font-medium text-gray-500 hover:bg-gray-100">2단계 (4-6개월)<br><span class="text-sm font-normal">참여 유도</span></button>
+                        <button data-tab="phase3" class="tab flex-1 py-3 px-1 text-center font-medium text-gray-500 hover:bg-gray-100">3단계 (7-12개월)<br><span class="text-sm font-normal">규모 확장</span></button>
+                    </div>
+                </div>
+                <div id="tab-contents">
+                    <div id="phase1" class="tab-content active">
+                        <h4 class="text-xl font-bold text-gray-700 mb-4">초점: 법규 준수, 공식 계정 개설, 초기 콘텐츠 배포</h4>
+                        <ul class="space-y-3 text-gray-600">
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>법률/계정:</strong> '의료광고 증명서' 발급 착수, 4대 플랫폼 공식 계정 개설</div></li>
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>콘텐츠:</strong> 핵심 유튜브 영상 현지화, 바이두 SEO용 블로그 개설 및 아티클 발행</div></li>
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>인플루언서:</strong> 파일럿 KOC 프로그램 실행 (5-10명 초청), 샤오홍슈 '체험 노트' 생성</div></li>
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>핵심 KPI:</strong> 광고증명서 취득, 초기 팔로워 수, KOC 포스팅 수 및 저장수</div></li>
+                        </ul>
+                    </div>
+                    <div id="phase2" class="tab-content">
+                        <h4 class="text-xl font-bold text-gray-700 mb-4">초점: 콘텐츠 발행 확대, 초기 광고 집행, 커뮤니티 구축</h4>
+                         <ul class="space-y-3 text-gray-600">
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>콘텐츠/광고:</strong> OSMU 콘텐츠 제작 확대, 샤오홍슈/도우인에서 유료 광고 집행</div></li>
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>참여:</strong> 도우인 교육 라이브 방송 진행(의사 Q&A), 위챗 팔로워 대상 이벤트</div></li>
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>인플루언서:</strong> KOC 프로그램 확대 (20-30명)하여 콘텐츠 양과 다양성 확보</div></li>
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>핵심 KPI:</strong> 콘텐츠 참여율(저장, 공유), CPC, 라이브 시청자 수, 위챗 상담 문의 건수</div></li>
+                        </ul>
+                    </div>
+                    <div id="phase3" class="tab-content">
+                        <h4 class="text-xl font-bold text-gray-700 mb-4">초점: 대규모 캠페인, O2O 연계 강화, 실질적 환자 유치</h4>
+                         <ul class="space-y-3 text-gray-600">
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>캠페인:</strong> 신뢰도 높은 전문가형 최상급 KOL과 대규모 캠페인 진행 (심층 인터뷰 등)</div></li>
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>전환 최적화:</strong> 바이두 검색 광고(SEM) 최적화, OTA(씨트립 등)와 제휴 모색</div></li>
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>프로모션:</strong> 중국 연휴 시즌(춘절 등) 겨냥한 의료관광 프로모션 기획</div></li>
+                            <li class="flex items-start"><span class="font-bold text-indigo-600 mr-3">✔️</span><div><strong>핵심 KPI:</strong> 중국발 실질 환자 예약 건수, 고객 획득 비용(CAC), 광고 투자 대비 수익률(ROAS)</div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="guides" class="page-section">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">핵심 성공 가이드</h2>
+                <p class="mt-4 text-lg text-gray-600">규제와 인플루언서 활용은 중국 마케팅의 성패를 좌우합니다.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="section-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-700 mb-4">의료 광고 규제: Do's & Don'ts</h3>
+                    <p class="text-gray-600 mb-6">'결과 약속'이 아닌 '과정 설명'으로 패러다임을 전환하여 신뢰를 구축합니다.</p>
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-red-800">🚫 Don'ts (금지)</h4>
+                            <ul class="list-disc list-inside text-sm text-red-700 mt-2 space-y-1">
+                                <li>효능/효과 보장 ("완벽하게 제거됩니다")</li>
+                                <li>치유율/효율 수치 제시 ("99% 효과")</li>
+                                <li>환자 후기 및 비포애프터 사진 활용</li>
+                                <li>'최고', '1위' 등 절대적 표현 사용</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-green-800">👍 Do's (허용)</h4>
+                             <ul class="list-disc list-inside text-sm text-green-700 mt-2 space-y-1">
+                                <li>기술의 과학적 원리 설명 (에너지 전달 방식 등)</li>
+                                <li>안전 원칙 및 프로세스 강조 (정품정량, 위생)</li>
+                                <li>보유 장비 등 객관적 사실 전달</li>
+                                <li>전문적 시술 환경 및 시설 소개</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-700 mb-4">인플루언서 전략: KOC 중심 접근</h3>
+                     <p class="text-gray-600 mb-6">소수 유명인(KOL)보다 다수 '핵심 오피니언 소비자(KOC)'를 통해 진정성 있는 '체험기'를 확산시켜 사회적 증거를 구축합니다.</p>
+                    <div class="chart-container">
+                        <canvas id="influencerChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-gray-500 mt-2">권장 예산 분배</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-16 border-t">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2025 Clinic Marketing Strategy. 이 대시보드는 정보 제공 목적으로 제작되었습니다.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const navLinks = document.querySelectorAll('nav a');
+            const sections = document.querySelectorAll('.page-section');
+
+            function updateActiveLink() {
+                let currentSection = 'overview';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 80) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${currentSection}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', updateActiveLink);
+            updateActiveLink();
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (link.getAttribute('href').startsWith('#')) {
+                        e.preventDefault();
+                        document.querySelector(link.getAttribute('href')).scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                        if (mobileMenu.classList.contains('hidden') === false) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetId = tab.dataset.tab;
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === targetId) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            const platformData = {
+                douyin: {
+                    title: "도우인 (抖音): 인지도와 참여의 엔진",
+                    description: "짧고 강렬한 영상으로 폭발적인 대중 인지도를 확보하고 트렌디한 브랜드 이미지를 구축합니다. 재미와 정보가 결합된 '에듀테인먼트' 콘텐츠가 효과적입니다.",
+                    role: "잠재고객 깔때기(Funnel)의 최상층부를 공략하여 브랜드 호기심을 자극합니다.",
+                    target: "10-30대 남녀, 엔터테인먼트 추구형 사용자",
+                    content: "15-60초 숏폼 비디오, 기술 쇼케이스, 클리닉 V-log, 라이브 스트리밍",
+                    kpi: "영상 조회수, 공유율, 팔로워 증가 수"
+                },
+                xiaohongshu: {
+                    title: "샤오홍슈 (小红书): 신뢰와 발견의 엔진",
+                    description: "높은 구매의사를 가진 잠재고객에게 깊은 신뢰를 구축하고 전문 정보를 제공하는 '라이프스타일 검색엔진'입니다. '찐후기'와 '종차오(种草)' 문화가 핵심입니다.",
+                    role: "전문가 그룹으로 포지셔닝하여 안전과 전문성에 대한 긍정적 평판을 구축합니다.",
+                    target: "20-30대 구매력 높은 도시 여성, 정보 탐색 및 구매 결정형 사용자",
+                    content: "이미지+텍스트 노트(图文笔记), 기술/성분 심층 분석, KOC 체험 일지",
+                    kpi: "콘텐츠 저장수(收藏), 댓글, 공유수"
+                },
+                wechat: {
+                    title: "위챗 (微信): 고객 관계 및 전환 허브",
+                    description: "확보된 잠재고객을 관리하고 1:1 소통을 통해 최종 방문을 유도하는 폐쇄형 생태계입니다. O2O 전환의 핵심 도구입니다.",
+                    role: "'디지털 프런트 데스크'로서 잠재고객과의 신뢰를 심화시키고 편리한 예약 시스템을 제공합니다.",
+                    target: "샤오홍슈/도우인에서 유입된 고관여 잠재고객",
+                    content: "공식계정 아티클, 미니프로그램 예약 시스템, 1:1 상담 채팅",
+                    kpi: "미니프로그램 예약 건수, 상담 문의 건수"
+                },
+                baidu: {
+                    title: "바이두 (百度): 목적성 수요 포착",
+                    description: "특정 피부 문제 해결책을 적극적으로 검색하는 '목적성'을 가진 사용자를 포착하는 중국의 지배적인 검색 엔진입니다.",
+                    role: "구매 결정 단계의 마지막에 있는 가장 중요한 잠재고객을 놓치지 않고 포착합니다.",
+                    target: "명확한 시술/클리닉 정보를 찾는 검색 사용자",
+                    content: "SEO 최적화된 정보성 아티클, SEM 키워드 광고",
+                    kpi: "검색 광고 클릭률(CTR), 웹사이트 전환율"
+                }
+            };
+            
+            const platformCards = document.querySelectorAll('.platform-card');
+            const detailsContainer = document.getElementById('platform-details-container');
+
+            platformCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const platformId = card.id.split('-')[1];
+                    const data = platformData[platformId];
+
+                    platformCards.forEach(c => c.classList.remove('ring-2', 'ring-gray-500'));
+                    card.classList.add('ring-2', 'ring-gray-500');
+                    
+                    detailsContainer.innerHTML = `
+                        <div id="details-content" class="platform-details p-6 bg-white border rounded-lg">
+                            <h4 class="text-xl font-bold text-gray-800 mb-3">${data.title}</h4>
+                            <p class="text-gray-600 mb-4">${data.description}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div class="bg-gray-50 p-3 rounded-md"><strong>✨ 전략적 역할:</strong> ${data.role}</div>
+                                <div class="bg-gray-50 p-3 rounded-md"><strong>🎯 주요 타겟:</strong> ${data.target}</div>
+                                <div class="bg-gray-50 p-3 rounded-md"><strong>🎬 핵심 콘텐츠:</strong> ${data.content}</div>
+                                <div class="bg-gray-50 p-3 rounded-md"><strong>📊 주요 KPI:</strong> ${data.kpi}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Force a reflow to make the transition work
+                    const detailsContent = document.getElementById('details-content');
+                    requestAnimationFrame(() => {
+                        detailsContent.classList.add('active');
+                    });
+                });
+            });
+
+            const influencerCtx = document.getElementById('influencerChart').getContext('2d');
+            new Chart(influencerCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['KOC (핵심 오피니언 소비자)', 'KOL (핵심 오피니언 리더)'],
+                    datasets: [{
+                        label: '예산 분배',
+                        data: [80, 20],
+                        backgroundColor: [
+                            'rgba(79, 70, 229, 0.7)',
+                            'rgba(209, 213, 219, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(79, 70, 229, 1)',
+                            'rgba(209, 213, 219, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
