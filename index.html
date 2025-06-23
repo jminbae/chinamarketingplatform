@@ -20,6 +20,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #F8F9FA;
@@ -67,22 +70,22 @@
         .tab-content.active {
             display: block;
         }
-        .platform-card {
+        .platform-card, .strategy-card {
             cursor: pointer;
         }
-        .platform-details {
+        .details-panel {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.7s ease-in-out;
         }
-        .platform-details.active {
+        .details-panel.active {
             max-height: 1000px; /* Large enough to not clip content */
         }
     </style>
 </head>
 <body class="bg-gray-50">
 
-    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <header id="main-header" class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex-shrink-0">
@@ -128,23 +131,23 @@
 
             <div class="section-card p-8">
                  <h3 class="text-2xl font-bold text-gray-700 mb-4">핵심 성공 전략 요약</h3>
-                 <p class="text-gray-600 mb-6">성공적인 중국 시장 진출은 단일 플랫폼이 아닌, 각기 다른 역할을 수행하는 여러 플랫폼을 유기적으로 연결하는 '통합 생태계 구축'에 달려있습니다. 30만 구독자의 유튜브 채널이라는 강력한 자산을 '원소스 멀티유즈(OSMU)' 방식으로 재가공하여 콘텐츠 효율을 극대화하고, 엄격한 현지 의료 광고 법규를 '신뢰의 방패막'으로 활용하는 것이 핵심입니다. 이 대시보드는 이러한 복합적인 전략을 시각적이고 체계적으로 이해할 수 있도록 돕습니다.</p>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-gray-100 p-4 rounded-lg">
+                 <p class="text-gray-600 mb-6">성공적인 중국 시장 진출은 단일 플랫폼이 아닌, 각기 다른 역할을 수행하는 여러 플랫폼을 유기적으로 연결하는 '통합 생태계 구축'에 달려있습니다. 30만 구독자의 유튜브 채널이라는 강력한 자산을 '원소스 멀티유즈(OSMU)' 방식으로 재가공하여 콘텐츠 효율을 극대화하고, 엄격한 현지 의료 광고 법규를 '신뢰의 방패막'으로 활용하는 것이 핵심입니다. 이 대시보드는 이러한 복합적인 전략을 시각적이고 체계적으로 이해할 수 있도록 돕니다.</p>
+                <div id="strategy-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="strategy-card bg-gray-100 p-4 rounded-lg transition-all duration-300 hover:bg-gray-200">
                         <h4 class="font-bold text-gray-700">① 통합 생태계 구축</h4>
-                        <p class="text-sm text-gray-600 mt-1">도우인, 샤오홍슈, 위챗, 바이두를 연동하여 인지-고려-전환의 고객 여정 설계</p>
+                        <p class="text-sm text-gray-600 mt-1" data-details="도우인, 샤오홍슈, 위챗, 바이두를 고객 여정(인지-고려-전환)에 맞춰 유기적으로 연동합니다. 각 플랫폼에서 확보된 잠재 고객이 다음 단계로 자연스럽게 이동하는 구조를 설계하여 마케팅 효율을 극대화합니다.">도우인, 샤오홍슈, 위챗, 바이두를 연동하여 인지-고려-전환의 고객 여정 설계</p>
                     </div>
-                    <div class="bg-gray-100 p-4 rounded-lg">
+                     <div class="strategy-card bg-gray-100 p-4 rounded-lg transition-all duration-300 hover:bg-gray-200">
                         <h4 class="font-bold text-gray-700">② 콘텐츠 재활용 극대화</h4>
-                        <p class="text-sm text-gray-600 mt-1">기존 유튜브 영상을 중국 플랫폼에 맞게 재가공하여 비용 효율 및 전문성 확보</p>
+                        <p class="text-sm text-gray-600 mt-1" data-details="하나의 긴 유튜브 전문가 영상을 여러 개의 짧은 영상, 카드뉴스, 블로그 포스트로 재가공합니다. 이를 통해 최소의 리소스로 4대 플랫폼 모두에 최적화된 콘텐츠를 지속적으로 공급하며 전문성을 유지합니다.">기존 유튜브 영상을 중국 플랫폼에 맞게 재가공하여 비용 효율 및 전문성 확보</p>
                     </div>
-                    <div class="bg-gray-100 p-4 rounded-lg">
+                     <div class="strategy-card bg-gray-100 p-4 rounded-lg transition-all duration-300 hover:bg-gray-200">
                         <h4 class="font-bold text-gray-700">③ 규제 준수를 통한 차별화</h4>
-                        <p class="text-sm text-gray-600 mt-1">'효능 보장'이 아닌 '과학적 정보 제공'으로 신뢰를 쌓는 교육적 마케팅 전개</p>
+                        <p class="text-sm text-gray-600 mt-1" data-details="중국의 엄격한 의료 광고법을 '기회'로 활용합니다. '효과 보장'과 같은 불법적 과장 광고 대신, 기술의 원리, 안전 프로토콜 등 '과학적 사실'에 기반한 교육적 콘텐츠로 접근하여 비교 불가능한 신뢰를 얻습니다.">'효능 보장'이 아닌 '과학적 정보 제공'으로 신뢰를 쌓는 교육적 마케팅 전개</p>
                     </div>
-                    <div class="bg-gray-100 p-4 rounded-lg">
+                     <div class="strategy-card bg-gray-100 p-4 rounded-lg transition-all duration-300 hover:bg-gray-200">
                         <h4 class="font-bold text-gray-700">④ 진정성 중심 인플루언서</h4>
-                        <p class="text-sm text-gray-600 mt-1">소수 KOL 대신 다수 KOC를 활용해 '체험기' 중심의 사회적 증거 구축</p>
+                        <p class="text-sm text-gray-600 mt-1" data-details="소수의 톱스타(KOL)보다 다수의 일반인 체험단(KOC)에 집중합니다. 법적 리스크가 적고, '진짜 후기'로 인식되어 구매 결정에 더 큰 영향을 미치는 '사회적 증거'를 다각적으로 구축하는 전략입니다.">소수 KOL 대신 다수 KOC를 활용해 '체험기' 중심의 사회적 증거 구축</p>
                     </div>
                 </div>
             </div>
@@ -157,21 +160,21 @@
             </div>
             <div class="section-card p-8 mb-8">
                  <div id="platform-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div id="platform-douyin" class="platform-card p-6 bg-gray-100 rounded-lg text-center transition-all duration-300 hover:bg-gray-200">
+                    <div id="platform-douyin" class="platform-card p-6 rounded-lg text-center transition-all duration-300 text-white bg-gray-800 hover:bg-gray-700">
                         <h4 class="text-xl font-bold">도우인 (抖音)</h4>
-                        <p class="text-sm text-gray-500">인지도 확보</p>
+                        <p class="text-sm text-gray-300">인지도 확보</p>
                     </div>
-                    <div id="platform-xiaohongshu" class="platform-card p-6 bg-gray-100 rounded-lg text-center transition-all duration-300 hover:bg-gray-200">
+                    <div id="platform-xiaohongshu" class="platform-card p-6 rounded-lg text-center transition-all duration-300 text-white bg-red-600 hover:bg-red-500">
                         <h4 class="text-xl font-bold">샤오홍슈 (小红书)</h4>
-                        <p class="text-sm text-gray-500">신뢰 구축</p>
+                        <p class="text-sm text-red-200">신뢰 구축</p>
                     </div>
-                    <div id="platform-wechat" class="platform-card p-6 bg-gray-100 rounded-lg text-center transition-all duration-300 hover:bg-gray-200">
+                    <div id="platform-wechat" class="platform-card p-6 rounded-lg text-center transition-all duration-300 text-white bg-green-600 hover:bg-green-500">
                         <h4 class="text-xl font-bold">위챗 (微信)</h4>
-                        <p class="text-sm text-gray-500">예약 전환</p>
+                        <p class="text-sm text-green-200">예약 전환</p>
                     </div>
-                    <div id="platform-baidu" class="platform-card p-6 bg-gray-100 rounded-lg text-center transition-all duration-300 hover:bg-gray-200">
+                    <div id="platform-baidu" class="platform-card p-6 rounded-lg text-center transition-all duration-300 text-white bg-blue-600 hover:bg-blue-500">
                         <h4 class="text-xl font-bold">바이두 (百度)</h4>
-                        <p class="text-sm text-gray-500">수요 포착</p>
+                        <p class="text-sm text-blue-200">수요 포착</p>
                     </div>
                 </div>
             </div>
@@ -192,32 +195,32 @@
                     <div class="hidden md:block text-4xl text-gray-400">→</div>
                     <div class="block md:hidden text-4xl text-gray-400">↓</div>
                     <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
-                        <div class="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-                            <h5 class="font-bold text-green-800">샤오홍슈 (图文笔记)</h5>
+                        <div class="p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                            <h5 class="font-bold text-red-800">샤오홍슈 (图文笔记)</h5>
                             <ul class="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
                                 <li>시술 원리 심층 분석 (다이어그램)</li>
                                 <li>피부 타입별 선택 가이드</li>
                                 <li>KOC의 상세 체험 일지</li>
                             </ul>
                         </div>
-                        <div class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                            <h5 class="font-bold text-blue-800">도우인 (숏폼)</h5>
+                        <div class="p-4 bg-gray-200 rounded-lg border-l-4 border-gray-600">
+                            <h5 class="font-bold text-gray-800">도우인 (숏폼)</h5>
                             <ul class="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
                                 <li>15초 핵심 차이 요약 영상</li>
                                 <li>의사가 설명하는 30초 Q&A</li>
                                 <li>장비의 역동적인 모습 쇼케이스</li>
                             </ul>
                         </div>
-                        <div class="p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
-                            <h5 class="font-bold text-purple-800">위챗 (공식계정)</h5>
+                        <div class="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                            <h5 class="font-bold text-green-800">위챗 (공식계정)</h5>
                             <ul class="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
                                 <li>영상 기반 심층 분석 리포트</li>
                                 <li>자주 묻는 질문(FAQ) 정리</li>
                                 <li>구독자 대상 프로모션 공지</li>
                             </ul>
                         </div>
-                        <div class="p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
-                            <h5 class="font-bold text-yellow-800">바이두 (SEO)</h5>
+                        <div class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <h5 class="font-bold text-blue-800">바이두 (SEO)</h5>
                              <ul class="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
                                 <li>'울쎄라 써마지 차이' 키워드 포스팅</li>
                                 <li>'여드름 흉터 치료' 정보성 아티클</li>
@@ -325,6 +328,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             
+            const mainHeader = document.getElementById('main-header');
+            const headerHeight = mainHeader.offsetHeight;
+
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenuButton.addEventListener('click', () => {
@@ -338,7 +344,7 @@
                 let currentSection = 'overview';
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - 80) {
+                    if (window.pageYOffset >= sectionTop - headerHeight) {
                         currentSection = section.getAttribute('id');
                     }
                 });
@@ -358,9 +364,16 @@
                 link.addEventListener('click', (e) => {
                     if (link.getAttribute('href').startsWith('#')) {
                         e.preventDefault();
-                        document.querySelector(link.getAttribute('href')).scrollIntoView({
-                            behavior: 'smooth'
-                        });
+                        const targetElement = document.querySelector(link.getAttribute('href'));
+                        if (targetElement) {
+                             const elementPosition = targetElement.getBoundingClientRect().top;
+                             const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+                           
+                             window.scrollTo({
+                                 top: offsetPosition,
+                                 behavior: "smooth"
+                             });
+                        }
                         if (mobileMenu.classList.contains('hidden') === false) {
                             mobileMenu.classList.add('hidden');
                         }
@@ -385,6 +398,50 @@
                 });
             });
 
+            // Strategy Section Accordion
+            const strategyGrid = document.getElementById('strategy-grid');
+            const strategyCards = document.querySelectorAll('.strategy-card');
+            let strategyDetailsWrapper = null;
+
+            strategyCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const detailsText = card.querySelector('p').dataset.details;
+                    const isAlreadyActive = card.classList.contains('ring-2');
+
+                    if (strategyDetailsWrapper) {
+                        strategyDetailsWrapper.remove();
+                        strategyDetailsWrapper = null;
+                    }
+                    strategyCards.forEach(c => c.classList.remove('ring-2', 'ring-indigo-500'));
+                    
+                    if (!isAlreadyActive) {
+                        card.classList.add('ring-2', 'ring-indigo-500');
+
+                        strategyDetailsWrapper = document.createElement('div');
+                        strategyDetailsWrapper.className = 'col-span-2 md:col-span-2 lg:col-span-4 mt-4';
+                        strategyDetailsWrapper.innerHTML = `<div class="details-panel p-6 bg-gray-50 border rounded-lg">${detailsText}</div>`;
+                        
+                        const cardsInGrid = Array.from(strategyGrid.children).filter(el => el.classList.contains('strategy-card'));
+                        const currentIndex = cardsInGrid.indexOf(card);
+                        const columns = window.innerWidth >= 1024 ? 4 : 2;
+                        const endOfRowIndex = Math.ceil((currentIndex + 1) / columns) * columns - 1;
+                        const insertAfterElement = cardsInGrid[Math.min(endOfRowIndex, cardsInGrid.length - 1)];
+                        
+                        insertAfterElement.after(strategyDetailsWrapper);
+
+                        requestAnimationFrame(() => {
+                           const detailsPanel = strategyDetailsWrapper.querySelector('.details-panel');
+                           detailsPanel.classList.add('active');
+                           const elementPosition = card.getBoundingClientRect().top;
+                           const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+                           window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                        });
+                    }
+                });
+            });
+
+
+            // Platform Section Accordion
             const platformData = {
                 douyin: {
                     title: "도우인 (抖音): 인지도와 참여의 엔진",
@@ -422,7 +479,7 @@
             
             const platformGrid = document.getElementById('platform-grid');
             const platformCards = document.querySelectorAll('.platform-card');
-            let detailsWrapper = null;
+            let platformDetailsWrapper = null;
 
             platformCards.forEach(card => {
                 card.addEventListener('click', () => {
@@ -430,19 +487,19 @@
                     const data = platformData[platformId];
                     const isAlreadyActive = card.classList.contains('ring-2');
 
-                    if (detailsWrapper) {
-                        detailsWrapper.remove();
-                        detailsWrapper = null;
+                    if (platformDetailsWrapper) {
+                        platformDetailsWrapper.remove();
+                        platformDetailsWrapper = null;
                     }
-                    platformCards.forEach(c => c.classList.remove('ring-2', 'ring-gray-500'));
+                    platformCards.forEach(c => c.classList.remove('ring-2', 'ring-offset-2', 'ring-indigo-500'));
 
                     if (!isAlreadyActive) {
-                        card.classList.add('ring-2', 'ring-gray-500');
+                        card.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-500');
 
-                        detailsWrapper = document.createElement('div');
-                        detailsWrapper.className = 'col-span-1 md:col-span-2 lg:col-span-4 mt-4';
-                        detailsWrapper.innerHTML = `
-                            <div class="platform-details p-6 bg-white border rounded-lg">
+                        platformDetailsWrapper = document.createElement('div');
+                        platformDetailsWrapper.className = 'col-span-1 md:col-span-2 lg:col-span-4 mt-4';
+                        platformDetailsWrapper.innerHTML = `
+                            <div class="details-panel p-6 bg-white border rounded-lg">
                                 <h4 class="text-xl font-bold text-gray-800 mb-3">${data.title}</h4>
                                 <p class="text-gray-600 mb-4">${data.description}</p>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -453,22 +510,24 @@
                                 </div>
                             </div>
                         `;
-
+                        
                         const cardsInGrid = Array.from(platformGrid.children).filter(el => el.classList.contains('platform-card'));
                         const currentIndex = cardsInGrid.indexOf(card);
                         const columns = window.innerWidth >= 1024 ? 4 : (window.innerWidth >= 768 ? 2 : 1);
                         const endOfRowIndex = Math.ceil((currentIndex + 1) / columns) * columns - 1;
                         const insertAfterElement = cardsInGrid[Math.min(endOfRowIndex, cardsInGrid.length - 1)];
 
-                        if (insertAfterElement) {
-                            insertAfterElement.after(detailsWrapper);
-                        } else {
-                            platformGrid.append(detailsWrapper);
-                        }
-
-                        const detailsContent = detailsWrapper.querySelector('.platform-details');
+                        insertAfterElement.after(platformDetailsWrapper);
+                        
                         requestAnimationFrame(() => {
-                            detailsContent.classList.add('active');
+                            const detailsPanel = platformDetailsWrapper.querySelector('.details-panel');
+                            detailsPanel.classList.add('active');
+                            const elementPosition = card.getBoundingClientRect().top;
+                            const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 10;
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: "smooth"
+                            });
                         });
                     }
                 });
