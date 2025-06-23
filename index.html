@@ -71,14 +71,12 @@
             cursor: pointer;
         }
         .platform-details {
-            display: none;
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.7s ease-in-out;
         }
         .platform-details.active {
-             display: block;
-            max-height: 1000px;
+            max-height: 1000px; /* Large enough to not clip content */
         }
     </style>
 </head>
@@ -158,7 +156,7 @@
                 <p class="mt-4 text-lg text-gray-600">각 플랫폼의 역할과 특성을 이해하고 고객 여정 단계별로 활용합니다.</p>
             </div>
             <div class="section-card p-8 mb-8">
-                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                 <div id="platform-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div id="platform-douyin" class="platform-card p-6 bg-gray-100 rounded-lg text-center transition-all duration-300 hover:bg-gray-200">
                         <h4 class="text-xl font-bold">도우인 (抖音)</h4>
                         <p class="text-sm text-gray-500">인지도 확보</p>
@@ -176,7 +174,6 @@
                         <p class="text-sm text-gray-500">수요 포착</p>
                     </div>
                 </div>
-                <div id="platform-details-container" class="mt-6"></div>
             </div>
         </section>
 
@@ -423,35 +420,57 @@
                 }
             };
             
+            const platformGrid = document.getElementById('platform-grid');
             const platformCards = document.querySelectorAll('.platform-card');
-            const detailsContainer = document.getElementById('platform-details-container');
+            let detailsWrapper = null;
 
             platformCards.forEach(card => {
                 card.addEventListener('click', () => {
                     const platformId = card.id.split('-')[1];
                     const data = platformData[platformId];
+                    const isAlreadyActive = card.classList.contains('ring-2');
 
+                    if (detailsWrapper) {
+                        detailsWrapper.remove();
+                        detailsWrapper = null;
+                    }
                     platformCards.forEach(c => c.classList.remove('ring-2', 'ring-gray-500'));
-                    card.classList.add('ring-2', 'ring-gray-500');
-                    
-                    detailsContainer.innerHTML = `
-                        <div id="details-content" class="platform-details p-6 bg-white border rounded-lg">
-                            <h4 class="text-xl font-bold text-gray-800 mb-3">${data.title}</h4>
-                            <p class="text-gray-600 mb-4">${data.description}</p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                                <div class="bg-gray-50 p-3 rounded-md"><strong>✨ 전략적 역할:</strong> ${data.role}</div>
-                                <div class="bg-gray-50 p-3 rounded-md"><strong>🎯 주요 타겟:</strong> ${data.target}</div>
-                                <div class="bg-gray-50 p-3 rounded-md"><strong>🎬 핵심 콘텐츠:</strong> ${data.content}</div>
-                                <div class="bg-gray-50 p-3 rounded-md"><strong>📊 주요 KPI:</strong> ${data.kpi}</div>
+
+                    if (!isAlreadyActive) {
+                        card.classList.add('ring-2', 'ring-gray-500');
+
+                        detailsWrapper = document.createElement('div');
+                        detailsWrapper.className = 'col-span-1 md:col-span-2 lg:col-span-4 mt-4';
+                        detailsWrapper.innerHTML = `
+                            <div class="platform-details p-6 bg-white border rounded-lg">
+                                <h4 class="text-xl font-bold text-gray-800 mb-3">${data.title}</h4>
+                                <p class="text-gray-600 mb-4">${data.description}</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div class="bg-gray-50 p-3 rounded-md"><strong>✨ 전략적 역할:</strong> ${data.role}</div>
+                                    <div class="bg-gray-50 p-3 rounded-md"><strong>🎯 주요 타겟:</strong> ${data.target}</div>
+                                    <div class="bg-gray-50 p-3 rounded-md"><strong>🎬 핵심 콘텐츠:</strong> ${data.content}</div>
+                                    <div class="bg-gray-50 p-3 rounded-md"><strong>📊 주요 KPI:</strong> ${data.kpi}</div>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                    
-                    // Force a reflow to make the transition work
-                    const detailsContent = document.getElementById('details-content');
-                    requestAnimationFrame(() => {
-                        detailsContent.classList.add('active');
-                    });
+                        `;
+
+                        const cardsInGrid = Array.from(platformGrid.children).filter(el => el.classList.contains('platform-card'));
+                        const currentIndex = cardsInGrid.indexOf(card);
+                        const columns = window.innerWidth >= 1024 ? 4 : (window.innerWidth >= 768 ? 2 : 1);
+                        const endOfRowIndex = Math.ceil((currentIndex + 1) / columns) * columns - 1;
+                        const insertAfterElement = cardsInGrid[Math.min(endOfRowIndex, cardsInGrid.length - 1)];
+
+                        if (insertAfterElement) {
+                            insertAfterElement.after(detailsWrapper);
+                        } else {
+                            platformGrid.append(detailsWrapper);
+                        }
+
+                        const detailsContent = detailsWrapper.querySelector('.platform-details');
+                        requestAnimationFrame(() => {
+                            detailsContent.classList.add('active');
+                        });
+                    }
                 });
             });
 
